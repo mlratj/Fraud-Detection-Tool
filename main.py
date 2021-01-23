@@ -16,6 +16,7 @@ def main(column_name):
         input_occ = occurrence_count(first_digits_set, first_digits)
         input_perc_occ = percentage_of_total(input_occ)
         benford = benford_distribution()
+        draw_histogram(benford, input_perc_occ)
     except:
         print("Provided data set is invalid.")
     return None
@@ -62,6 +63,22 @@ def percentage_of_total(l):
     total = sum(l)
     perc_list = [(x / total)*100 for x in l]
     return perc_list
+
+
+def draw_histogram(benford, user_data = None):
+    column_width = 0.4
+    labels = []
+    for x in range(1,10):
+        labels.append(x)
+    index = np.arange(len(labels))
+    plt.bar(index - column_width/2, benford, column_width, label = 'Benford',  color = 'green')
+    plt.bar(index + column_width/2, user_data, column_width, label = 'Data provided', color = 'red')
+    plt.xticks(index, labels)
+    plt.title("Benford distribution vs provided data")
+    plt.xlabel("First digits")
+    plt.ylabel("Occurrence [%]")
+    plt.legend()
+    plt.show()
 
 
 if __name__ == "__main__":
