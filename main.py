@@ -43,6 +43,7 @@ def extension_checker(filename):
 
 
 def benford_distribution():
+    """Provides a fixed list of probabilities determined by Benford's law."""
     benford = []
     i = 1
     while i < 10:
@@ -72,6 +73,7 @@ def percentage_of_total(l):
 
 
 def draw_histogram(benford, user_data = None):
+    """Creates a data plot that allows to check if data provided by a user meets rules discovered by Frank Benford."""
     column_width = 0.4
     labels = []
     for x in range(1,10):
