@@ -6,11 +6,18 @@ from matplotlib import pyplot as plt
 
 
 def main(column_name):
-    column_name = 'Shape__Area' # hardcoded value for test purposes
-    df = data_load(file_to_check)
-    df['first_d'] = df[column_name].apply(lambda x: first_digit(x))
-    first_digits = list(df['first_d'])
-    first_digits.remove(0)
+    try:
+        df = data_load(file_to_check)
+    except FileNotFoundError:
+        print("No such file.")
+        raise SystemExit
+    try:
+      df['first_d'] = df[column_name].apply(lambda x: first_digit(x))
+      first_digits = list(df['first_d'])
+      first_digits.remove(0)
+    except KeyError:
+        print("Provided column name doesn't exists.")
+        raise SystemExit
     try:
         first_digits_set = set(first_digits)
         input_occ = occurrence_count(first_digits_set, first_digits)
@@ -24,7 +31,6 @@ def main(column_name):
 
 def data_load(datasource_name):
     source_path = os.path.dirname(__file__)
-    datasource_name = 'hydrology_areas'  # hardcoded value for test purposes
     data = pd.read_csv(source_path + '/datasource/' + datasource_name + '.csv')
     return data
 
@@ -82,7 +88,8 @@ def draw_histogram(benford, user_data = None):
 
 
 if __name__ == "__main__":
-    file_to_check = input("Please type in a CSV file to check:\n ")
+    file_to_check = input("Please type in a CSV file to check:\n")
     field_to_check = input("Please specify a field to be checked by the tool:\n")
     valid_file = extension_checker(file_to_check)
-    main(column_name = None)
+    main(field_to_check)
+    # example parameters: 1. hydrology_areas 2.Shape__Area
