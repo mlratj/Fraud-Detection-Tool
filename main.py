@@ -1,12 +1,31 @@
 import pandas as pd
 import os
-from math import log
+import numpy as np
+from math import log, floor
+from matplotlib import pyplot as plt
 
 
-def main(datasource_name, column_name):
-    source_path = os.path.dirname(__file__)
-    data = pd.read_csv(source_path + '/datasource/' + datasource_name + '.csv')
+def main(column_name):
+    column_name = 'Shape__Area' # hardcoded value for test purposes
+    df = data_load(file_to_check)
+    df['first_d'] = df[column_name].apply(lambda x: first_digit(x))
+    first_digits = list(df['first_d'])
+    first_digits.remove(0)
+    try:
+        first_digits_set = set(first_digits)
+        input_occ = occurrence_count(first_digits_set, first_digits)
+        input_perc_occ = percentage_of_total(input_occ)
+        benford = benford_distribution()
+    except:
+        print("Provided data set is invalid.")
     return None
+
+
+def data_load(datasource_name):
+    source_path = os.path.dirname(__file__)
+    datasource_name = 'hydrology_areas'  # hardcoded value for test purposes
+    data = pd.read_csv(source_path + '/datasource/' + datasource_name + '.csv')
+    return data
 
 
 def extension_checker(filename):
@@ -20,12 +39,33 @@ def benford_distribution():
     benford = []
     i = 1
     while i < 10:
-        val = log(1 + 1/i, 10)
+        val = (log(1 + 1 / i, 10)) * 100
         benford.append(val)
         i += 1
     return benford
 
+
+def first_digit(num):
+    num = floor(num)
+    return int(str(num)[:1])
+
+
+def occurrence_count(data_set, data_list):
+    data_count = []
+    for i in data_set:
+        count = data_list.count(i)
+        data_count.append(count)
+    return data_count
+
+
+def percentage_of_total(l):
+    total = sum(l)
+    perc_list = [(x / total)*100 for x in l]
+    return perc_list
+
+
 if __name__ == "__main__":
     file_to_check = input("Please type in a CSV file to check:\n ")
     field_to_check = input("Please specify a field to be checked by the tool:\n")
-    main(extension_checker(file_to_check), field_to_check)
+    valid_file = extension_checker(file_to_check)
+    main(column_name = None)
