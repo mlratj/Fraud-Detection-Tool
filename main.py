@@ -30,7 +30,7 @@ def main(column_name):
 
 
 def data_load(datasource_name):
-    source_path = os.path.dirname(__file__)
+    source_path = os.path.dirname(os.path.abspath(__file__))
     data = pd.read_csv(source_path + '/datasource/' + datasource_name + '.csv')
     return data
 
