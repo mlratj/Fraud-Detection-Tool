@@ -32,8 +32,8 @@ def main(valid_file):
         input_perc_occ = percentage_of_total(input_occ)
         benford = benford_distribution()
         draw_histogram(benford, input_perc_occ)
-    except Exception:
-        print("Provided data set is invalid.")
+    except Exception as e:
+        print(f"Provided data set is invalid: {e}")
     return True
 
 
@@ -77,8 +77,12 @@ def occurrence_count(data_list):
 
 def percentage_of_total(l):
     total = sum(l)
-    perc_list = [(x / total) * 100 for x in l]
-    return perc_list
+    if total == 0:
+        raise ValueError(
+            "No valid first digits found in the dataset. "
+            "Ensure the selected column contains values greater than or equal to 1."
+        )
+    return [(x / total) * 100 for x in l]
 
 
 def draw_histogram(benford, user_data=None):

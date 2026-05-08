@@ -78,6 +78,10 @@ class TestPercentageOfTotal:
         assert abs(result[0] - 25.0) < 0.001
         assert abs(result[1] - 75.0) < 0.001
 
+    def test_raises_on_all_zeros(self):
+        with pytest.raises(ValueError, match="No valid first digits found"):
+            percentage_of_total([0] * 9)
+
 
 class TestDrawHistogram:
     def test_renders_without_error(self):
