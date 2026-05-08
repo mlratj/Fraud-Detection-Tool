@@ -44,14 +44,21 @@ class TestFirstDigit:
 
 
 class TestOccurrenceCount:
-    def test_basic_counts(self):
-        result = occurrence_count({5}, [5, 5, 5])
-        assert result == [3]
+    def test_always_returns_nine_values(self):
+        assert len(occurrence_count([1, 2, 3])) == 9
 
-    def test_total_is_preserved(self):
-        data_list = [1, 1, 2, 3, 3, 3]
-        result = occurrence_count({1, 2, 3}, data_list)
-        assert sum(result) == len(data_list)
+    def test_ordered_1_to_9(self):
+        result = occurrence_count([1, 1, 2, 3])
+        assert result[0] == 2  # digit 1
+        assert result[1] == 1  # digit 2
+        assert result[2] == 1  # digit 3
+        assert result[3] == 0  # digit 4 — missing, should be 0
+
+    def test_missing_digit_gets_zero(self):
+        result = occurrence_count([1, 9])
+        assert result[0] == 1  # digit 1
+        assert result[7] == 0  # digit 8 — missing
+        assert result[8] == 1  # digit 9
 
 
 class TestPercentageOfTotal:
@@ -84,8 +91,7 @@ class TestIntegration:
         digits = list(df["first_d"])
         digits = [d for d in digits if d != 0]
 
-        digit_set = set(digits)
-        counts = occurrence_count(digit_set, digits)
+        counts = occurrence_count(digits)
         percentages = percentage_of_total(counts)
 
         assert abs(sum(percentages) - 100) < 0.001

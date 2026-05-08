@@ -25,8 +25,7 @@ def main(valid_file):
     except ValueError:
         pass
     try:
-        first_digits_set = set(first_digits)
-        input_occ = occurrence_count(first_digits_set, first_digits)
+        input_occ = occurrence_count(first_digits)
         input_perc_occ = percentage_of_total(input_occ)
         benford = benford_distribution()
         draw_histogram(benford, input_perc_occ)
@@ -72,12 +71,8 @@ def first_digit(num):
     return int(str(num)[:1])
 
 
-def occurrence_count(data_set, data_list):
-    data_count = []
-    for i in data_set:
-        count = data_list.count(i)
-        data_count.append(count)
-    return data_count
+def occurrence_count(data_list):
+    return [data_list.count(d) for d in range(1, 10)]
 
 
 def percentage_of_total(l):
