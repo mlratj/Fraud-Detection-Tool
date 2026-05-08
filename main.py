@@ -18,6 +18,13 @@ def main(valid_file):
         print(f"Column '{column_name}' not found. Available columns:")
         for col in df.columns:
             print(f"  {col}")
+    if pd.to_numeric(df[column_name], errors='coerce').lt(0).any():
+        print(
+            f"\nColumn '{column_name}' contains negative values.\n"
+            "According to Benford's Law, the analysed dataset must contain only "
+            "natural numbers. Please select a different file or column."
+        )
+        return False
     df['first_d'] = df[column_name].apply(lambda x: first_digit(x))
     first_digits = [d for d in df['first_d'] if d != 0]
     try:
@@ -27,7 +34,7 @@ def main(valid_file):
         draw_histogram(benford, input_perc_occ)
     except Exception:
         print("Provided data set is invalid.")
-    return None
+    return True
 
 
 def data_source(option):
@@ -92,7 +99,9 @@ def draw_histogram(benford, user_data=None):
 
 
 if __name__ == "__main__":
-    load_choice = menu.print_menu()
-    loaded_df = data_source(load_choice)
-    main(loaded_df)
+    while True:
+        load_choice = menu.print_menu()
+        loaded_df = data_source(load_choice)
+        if main(loaded_df):
+            break
     # example parameters: 1. hydrology_areas 2.Shape__Area

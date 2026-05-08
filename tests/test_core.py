@@ -1,6 +1,8 @@
 import pytest
 import pandas as pd
+from unittest.mock import patch
 from main import (
+    main,
     benford_distribution,
     first_digit,
     occurrence_count,
@@ -101,6 +103,22 @@ class TestCheckers:
     def test_list_datasource_files_is_sorted(self):
         files = list_datasource_files()
         assert files == sorted(files)
+
+
+class TestMain:
+    def test_returns_false_for_negative_values(self, tmp_path):
+        csv = tmp_path / "test.csv"
+        csv.write_text("amount\n-100\n200\n300\n")
+        with patch("builtins.input", return_value="amount"):
+            result = main(str(csv))
+        assert result is False
+
+    def test_returns_true_for_valid_data(self, tmp_path):
+        csv = tmp_path / "test.csv"
+        csv.write_text("amount\n100\n200\n300\n150\n250\n120\n110\n320\n180\n")
+        with patch("builtins.input", return_value="amount"):
+            result = main(str(csv))
+        assert result is True
 
 
 class TestIntegration:
