@@ -1,11 +1,10 @@
-import os
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).parent.parent
 
 
 def data_load(datasource_name):
-    source_path = (os.path.dirname(os.path.abspath(__file__)))
-    source_path = source_path[:-7]
-    data = (source_path + '/datasource/' + datasource_name)
-    return data
+    return str(PROJECT_ROOT / 'datasource' / datasource_name)
 
 
 def file_search(file_to_check):

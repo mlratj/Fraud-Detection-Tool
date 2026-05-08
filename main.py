@@ -30,7 +30,7 @@ def main(valid_file):
         input_perc_occ = percentage_of_total(input_occ)
         benford = benford_distribution()
         draw_histogram(benford, input_perc_occ)
-    except:
+    except Exception:
         print("Provided data set is invalid.")
     return None
 
