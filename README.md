@@ -1,7 +1,7 @@
 # Fraud Detection Tool
 
-A tool that checks whether a dataset's first-digit distribution conforms to
-[Benford's Law](https://en.wikipedia.org/wiki/Benford%27s_law). Significant
+A fraud detection tool that checks whether a dataset's first-digit distribution conforms to
+[Benford's Law](https://en.wikipedia.org/wiki/Benford%27s_law). In a nutsheel, a significant
 deviation from the expected distribution can indicate anomalies or potential
 fraud in the data.
 
@@ -26,7 +26,8 @@ The tool will prompt you to:
 
 1. **Choose a data source** — load a CSV from the `datasource/` directory or
    provide a URL to a remote CSV file.
-2. **Select a column** — specify which numeric column to analyse.
+2. **Select a column** — specify which numeric column to analyse. Pay attention to the
+theoretical requirements of the Benford's law.
 
 The tool then plots a histogram comparing your data's first-digit distribution
 against the theoretical Benford distribution.
@@ -34,7 +35,7 @@ against the theoretical Benford distribution.
 If an invalid file name or column name is entered, the tool lists the available
 options and prompts again.
 
-## Running tests
+## Running tests on the repo files
 
 ```bash
 uv run pytest
