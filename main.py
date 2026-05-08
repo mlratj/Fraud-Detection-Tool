@@ -10,20 +10,16 @@ from extras import checkers
 
 def main(valid_file):
     print("Data loaded successfully")
-    column_name = ''
-    while len(column_name) < 1:
+    df = pd.read_csv(valid_file)
+    while True:
         column_name = input("Please specify a field to be checked by the tool:\n")
-    try:
-        df = pd.read_csv(valid_file)
-        df['first_d'] = df[column_name].apply(lambda x: first_digit(x))
-        first_digits = list(df['first_d'])
-    except KeyError:
-        print("Provided column name doesn't exists.")
-        raise SystemExit
-    try:
-        first_digits.remove(0)
-    except ValueError:
-        pass
+        if column_name in df.columns:
+            break
+        print(f"Column '{column_name}' not found. Available columns:")
+        for col in df.columns:
+            print(f"  {col}")
+    df['first_d'] = df[column_name].apply(lambda x: first_digit(x))
+    first_digits = [d for d in df['first_d'] if d != 0]
     try:
         input_occ = occurrence_count(first_digits)
         input_perc_occ = percentage_of_total(input_occ)
@@ -36,23 +32,20 @@ def main(valid_file):
 
 def data_source(option):
     if option == 1:
-        # option 1:
-        file_to_check = input("Please type in a name of CSV file to check:\n")
-        valid_file = checkers.extension_checker(file_to_check)
-        checkers.file_search(valid_file)
-        try:
-            df = checkers.data_load(valid_file)
-        except FileNotFoundError:
-            print("No such file.")
-            raise SystemExit
+        while True:
+            file_to_check = input("Please type in a name of CSV file to check:\n")
+            valid_file = checkers.extension_checker(file_to_check)
+            file_path = checkers.data_load(valid_file)
+            if checkers.file_exists(file_path):
+                return file_path
+            print(f"'{valid_file}' not found. Available files in datasource:")
+            for name in checkers.list_datasource_files():
+                print(f"  {name}")
     else:
-        # option 2:
         url = input("Please enter an URL to the CSV file to check. \n")
         print("\n Loading...")
         s = requests.get(url).content
-        s_io = io.StringIO(s.decode('utf-8'))
-        df = s_io
-    return df
+        return io.StringIO(s.decode('utf-8'))
 
 
 def benford_distribution():

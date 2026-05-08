@@ -7,6 +7,7 @@ from main import (
     percentage_of_total,
     draw_histogram,
 )
+from extras.checkers import file_exists, list_datasource_files, data_load, extension_checker
 
 
 class TestBenfordDistribution:
@@ -81,6 +82,25 @@ class TestDrawHistogram:
         benford = benford_distribution()
         user_data = [100 / 9] * 9
         draw_histogram(benford, user_data)
+
+
+class TestCheckers:
+    def test_file_exists_true(self):
+        path = data_load(extension_checker('hydrology_areas'))
+        assert file_exists(path)
+
+    def test_file_exists_false(self):
+        path = data_load('nonexistent.csv')
+        assert not file_exists(path)
+
+    def test_list_datasource_files_returns_csvs(self):
+        files = list_datasource_files()
+        assert len(files) > 0
+        assert all(f.endswith('.csv') for f in files)
+
+    def test_list_datasource_files_is_sorted(self):
+        files = list_datasource_files()
+        assert files == sorted(files)
 
 
 class TestIntegration:

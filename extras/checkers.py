@@ -7,12 +7,13 @@ def data_load(datasource_name):
     return str(PROJECT_ROOT / 'datasource' / datasource_name)
 
 
-def file_search(file_to_check):
-    try:
-        df = data_load(file_to_check)
-    except FileNotFoundError:
-        print("No such file.")
-        raise SystemExit
+def file_exists(file_path):
+    return Path(file_path).exists()
+
+
+def list_datasource_files():
+    datasource_dir = PROJECT_ROOT / 'datasource'
+    return sorted(f.name for f in datasource_dir.iterdir() if f.suffix.lower() == '.csv')
 
 
 def extension_checker(filename):
