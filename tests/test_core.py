@@ -1,0 +1,92 @@
+import pytest
+import pandas as pd
+from main import (
+    benford_distribution,
+    first_digit,
+    occurrence_count,
+    percentage_of_total,
+    draw_histogram,
+)
+
+
+class TestBenfordDistribution:
+    def test_returns_nine_values(self):
+        assert len(benford_distribution()) == 9
+
+    def test_sums_to_100(self):
+        assert abs(sum(benford_distribution()) - 100) < 0.001
+
+    def test_first_digit_probability(self):
+        # P(d=1) = log10(2) ≈ 30.1%
+        assert abs(benford_distribution()[0] - 30.103) < 0.001
+
+    def test_decreasing_probabilities(self):
+        b = benford_distribution()
+        assert all(b[i] > b[i + 1] for i in range(len(b) - 1))
+
+
+class TestFirstDigit:
+    def test_integers(self):
+        assert first_digit(1) == 1
+        assert first_digit(5) == 5
+        assert first_digit(123) == 1
+        assert first_digit(999999) == 9
+
+    def test_floats(self):
+        assert first_digit(3.7) == 3
+        assert first_digit(9.999) == 9
+        assert first_digit(1.0001) == 1
+
+    def test_numpy_scalar(self):
+        import numpy as np
+        assert first_digit(np.float64(4.5)) == 4
+        assert first_digit(np.int64(7)) == 7
+
+
+class TestOccurrenceCount:
+    def test_basic_counts(self):
+        result = occurrence_count({5}, [5, 5, 5])
+        assert result == [3]
+
+    def test_total_is_preserved(self):
+        data_list = [1, 1, 2, 3, 3, 3]
+        result = occurrence_count({1, 2, 3}, data_list)
+        assert sum(result) == len(data_list)
+
+
+class TestPercentageOfTotal:
+    def test_equal_split(self):
+        result = percentage_of_total([1, 1, 1, 1])
+        assert all(abs(x - 25.0) < 0.001 for x in result)
+
+    def test_sums_to_100(self):
+        result = percentage_of_total([10, 20, 30, 40])
+        assert abs(sum(result) - 100) < 0.001
+
+    def test_proportions(self):
+        result = percentage_of_total([1, 3])
+        assert abs(result[0] - 25.0) < 0.001
+        assert abs(result[1] - 75.0) < 0.001
+
+
+class TestDrawHistogram:
+    def test_renders_without_error(self):
+        benford = benford_distribution()
+        user_data = [100 / 9] * 9
+        draw_histogram(benford, user_data)
+
+
+class TestIntegration:
+    def test_pipeline_with_dataframe(self):
+        """End-to-end: extract first digits from a DataFrame column and compare distributions."""
+        df = pd.DataFrame({"amount": [100, 200, 150, 300, 120, 250, 110, 320, 180]})
+        df["first_d"] = df["amount"].apply(first_digit)
+        digits = list(df["first_d"])
+        digits = [d for d in digits if d != 0]
+
+        digit_set = set(digits)
+        counts = occurrence_count(digit_set, digits)
+        percentages = percentage_of_total(counts)
+
+        assert abs(sum(percentages) - 100) < 0.001
+        assert all(p >= 0 for p in percentages)
